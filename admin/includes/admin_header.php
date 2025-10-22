@@ -82,6 +82,25 @@ if(!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true
                                 <i class="fas fa-envelope"></i> Contact Messages
                             </a>
                         </li>
+                        <li class="nav-item mt-3">
+                            <hr class="text-white">
+                            <p class="text-white small px-3 mb-2">Home Page Settings</p>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'home_content.php' ? 'active' : ''; ?>" href="home_content.php">
+                                <i class="fas fa-home"></i> Home Content
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'technologies.php' ? 'active' : ''; ?>" href="technologies.php">
+                                <i class="fas fa-microchip"></i> Technologies
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link <?php echo basename($_SERVER['PHP_SELF']) == 'features.php' ? 'active' : ''; ?>" href="features.php">
+                                <i class="fas fa-star"></i> Features
+                            </a>
+                        </li>
                         <li class="nav-item mt-4">
                             <a class="nav-link text-warning" href="logout.php">
                                 <i class="fas fa-sign-out-alt"></i> Logout

@@ -1,13 +1,56 @@
-<?php 
+<?php
 $page_title = "Home";
-include '../includes/header.php'; 
+include '../includes/header.php';
+include '../config/database.php';
+
+$hero_title = "SPARK";
+$hero_subtitle = "Sanjivani Platform for AI, Research & Knowledge";
+$hero_description = "Empowering students through innovation, technology, and collaborative learning";
+$about_title = "About SPARK";
+$about_content = "SPARK is the premier student club at Sanjivani University dedicated to fostering innovation in Artificial Intelligence, Research, and Knowledge sharing.";
+$about_content2 = "We bring together passionate students from various departments to collaborate, learn, and create cutting-edge solutions that address real-world challenges.";
+$vision_content = "To create a thriving ecosystem of innovators and researchers who leverage technology to solve global challenges and contribute to society's advancement through AI and emerging technologies.";
+$mission_content = "To provide students with hands-on experience in cutting-edge technologies, foster collaborative research, organize impactful events, and build a community of lifelong learners and innovators.";
+
+$query = "SELECT * FROM home_content WHERE is_active = 1 ORDER BY section_order";
+$result = mysqli_query($conn, $query);
+
+if ($result && mysqli_num_rows($result) > 0) {
+    while ($row = mysqli_fetch_assoc($result)) {
+        switch ($row['section_key']) {
+            case 'hero_title':
+                $hero_title = $row['section_content'];
+                break;
+            case 'hero_subtitle':
+                $hero_subtitle = $row['section_title'];
+                $hero_description = $row['section_content'];
+                break;
+            case 'about_title':
+                $about_title = $row['section_title'];
+                $about_content = $row['section_content'];
+                break;
+            case 'vision':
+                $vision_content = $row['section_content'];
+                break;
+            case 'mission':
+                $mission_content = $row['section_content'];
+                break;
+        }
+    }
+}
+
+$tech_query = "SELECT * FROM technologies WHERE is_active = 1 ORDER BY display_order";
+$technologies = mysqli_query($conn, $tech_query);
+
+$features_query = "SELECT * FROM features WHERE is_active = 1 ORDER BY display_order";
+$features = mysqli_query($conn, $features_query);
 ?>
 
 <div class="hero-section">
     <div class="container">
-        <h1 class="display-3 fw-bold mb-3"><i class="fas fa-fire-alt"></i> SPARK</h1>
-        <h2 class="mb-4">Sanjivani Platform for AI, Research & Knowledge</h2>
-        <p class="lead">Empowering students through innovation, technology, and collaborative learning</p>
+        <h1 class="display-3 fw-bold mb-3"><i class="fas fa-fire-alt"></i> <?php echo htmlspecialchars($hero_title); ?></h1>
+        <h2 class="mb-4"><?php echo htmlspecialchars($hero_subtitle); ?></h2>
+        <p class="lead"><?php echo htmlspecialchars($hero_description); ?></p>
         <a href="events.php" class="btn btn-light btn-lg mt-3">Explore Events</a>
     </div>
 </div>
@@ -16,9 +59,9 @@ include '../includes/header.php';
     <section class="mb-5">
         <div class="row align-items-center">
             <div class="col-md-6">
-                <h2 class="fw-bold mb-4">About SPARK</h2>
-                <p class="lead">SPARK is the premier student club at Sanjivani University dedicated to fostering innovation in Artificial Intelligence, Research, and Knowledge sharing.</p>
-                <p>We bring together passionate students from various departments to collaborate, learn, and create cutting-edge solutions that address real-world challenges.</p>
+                <h2 class="fw-bold mb-4"><?php echo htmlspecialchars($about_title); ?></h2>
+                <p class="lead"><?php echo htmlspecialchars($about_content); ?></p>
+                <p><?php echo htmlspecialchars($about_content2); ?></p>
             </div>
             <div class="col-md-6">
                 <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=600&h=400&fit=crop" alt="SPARK Team" class="img-fluid rounded shadow">
@@ -36,7 +79,7 @@ include '../includes/header.php';
                             <i class="fas fa-eye fa-3x text-primary"></i>
                         </div>
                         <h4 class="card-title text-center mb-3">Our Vision</h4>
-                        <p class="card-text">To create a thriving ecosystem of innovators and researchers who leverage technology to solve global challenges and contribute to society's advancement through AI and emerging technologies.</p>
+                        <p class="card-text"><?php echo htmlspecialchars($vision_content); ?></p>
                     </div>
                 </div>
             </div>
@@ -47,7 +90,7 @@ include '../includes/header.php';
                             <i class="fas fa-bullseye fa-3x text-success"></i>
                         </div>
                         <h4 class="card-title text-center mb-3">Our Mission</h4>
-                        <p class="card-text">To provide students with hands-on experience in cutting-edge technologies, foster collaborative research, organize impactful events, and build a community of lifelong learners and innovators.</p>
+                        <p class="card-text"><?php echo htmlspecialchars($mission_content); ?></p>
                     </div>
                 </div>
             </div>
@@ -57,106 +100,58 @@ include '../includes/header.php';
     <section class="mb-5">
         <h2 class="text-center fw-bold mb-5">Technologies We Explore</h2>
         <div class="row g-4">
-            <div class="col-md-3 col-sm-6">
-                <div class="card feature-card border-0 shadow-sm text-center p-4">
-                    <i class="fas fa-brain fa-3x text-primary mb-3"></i>
-                    <h5>Artificial Intelligence</h5>
-                    <p class="small">Machine Learning, Deep Learning, NLP</p>
+            <?php
+            if ($technologies && mysqli_num_rows($technologies) > 0) {
+                while ($tech = mysqli_fetch_assoc($technologies)) {
+                    $color_classes = ['text-primary', 'text-success', 'text-info', 'text-warning', 'text-danger'];
+                    $color = $color_classes[array_rand($color_classes)];
+            ?>
+                <div class="col-md-3 col-sm-6">
+                    <div class="card feature-card border-0 shadow-sm text-center p-4">
+                        <i class="fas <?php echo htmlspecialchars($tech['icon']); ?> fa-3x <?php echo $color; ?> mb-3"></i>
+                        <h5><?php echo htmlspecialchars($tech['title']); ?></h5>
+                        <p class="small"><?php echo htmlspecialchars($tech['description']); ?></p>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="card feature-card border-0 shadow-sm text-center p-4">
-                    <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
-                    <h5>Data Science</h5>
-                    <p class="small">Analytics, Visualization, Big Data</p>
+            <?php
+                }
+            } else {
+            ?>
+                <div class="col-12 text-center">
+                    <p class="text-muted">No technologies available at the moment.</p>
                 </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="card feature-card border-0 shadow-sm text-center p-4">
-                    <i class="fas fa-cloud fa-3x text-info mb-3"></i>
-                    <h5>Cloud Computing</h5>
-                    <p class="small">AWS, Azure, Google Cloud</p>
-                </div>
-            </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="card feature-card border-0 shadow-sm text-center p-4">
-                    <i class="fas fa-code fa-3x text-warning mb-3"></i>
-                    <h5>Web Development</h5>
-                    <p class="small">Full Stack, Mobile, APIs</p>
-                </div>
-            </div>
+            <?php } ?>
         </div>
     </section>
 
     <section class="mb-5">
         <h2 class="text-center fw-bold mb-5">Why Join SPARK?</h2>
         <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card feature-card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <i class="fas fa-users fa-2x text-primary"></i>
+            <?php
+            if ($features && mysqli_num_rows($features) > 0) {
+                while ($feature = mysqli_fetch_assoc($features)) {
+                    $color_classes = ['text-primary', 'text-success', 'text-warning', 'text-info', 'text-danger'];
+                    $color = $color_classes[array_rand($color_classes)];
+            ?>
+                <div class="col-md-4">
+                    <div class="card feature-card border-0 shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <i class="fas <?php echo htmlspecialchars($feature['icon']); ?> fa-2x <?php echo $color; ?>"></i>
+                            </div>
+                            <h5 class="card-title"><?php echo htmlspecialchars($feature['title']); ?></h5>
+                            <p class="card-text"><?php echo htmlspecialchars($feature['description']); ?></p>
                         </div>
-                        <h5 class="card-title">Collaborative Learning</h5>
-                        <p class="card-text">Work with like-minded peers, share knowledge, and grow together through group projects and peer mentoring.</p>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card feature-card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <i class="fas fa-laptop-code fa-2x text-success"></i>
-                        </div>
-                        <h5 class="card-title">Hands-On Projects</h5>
-                        <p class="card-text">Gain practical experience by working on real-world projects and industry-relevant challenges.</p>
-                    </div>
+            <?php
+                }
+            } else {
+            ?>
+                <div class="col-12 text-center">
+                    <p class="text-muted">No features available at the moment.</p>
                 </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card feature-card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <i class="fas fa-trophy fa-2x text-warning"></i>
-                        </div>
-                        <h5 class="card-title">Competitions & Events</h5>
-                        <p class="card-text">Participate in hackathons, workshops, and competitions to showcase your skills and win exciting prizes.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card feature-card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <i class="fas fa-certificate fa-2x text-info"></i>
-                        </div>
-                        <h5 class="card-title">Certifications</h5>
-                        <p class="card-text">Earn certificates for workshops, events, and achievements to enhance your resume and LinkedIn profile.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card feature-card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <i class="fas fa-network-wired fa-2x text-danger"></i>
-                        </div>
-                        <h5 class="card-title">Networking</h5>
-                        <p class="card-text">Connect with industry professionals, alumni, and fellow students to build valuable relationships.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card feature-card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <i class="fas fa-lightbulb fa-2x text-primary"></i>
-                        </div>
-                        <h5 class="card-title">Innovation Hub</h5>
-                        <p class="card-text">Access to resources, mentorship, and support to bring your innovative ideas to life.</p>
-                    </div>
-                </div>
-            </div>
+            <?php } ?>
         </div>
     </section>
 
